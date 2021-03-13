@@ -23,9 +23,6 @@ type Countries = {
 };
 
 const orderBy = (countries, value, direction) => {
-    console.log("value", value);
-    console.log("direction", direction);
-
     if (direction === "asc") {
         return [...countries].sort((a, b) => {
             return a[value] > b[value] ? 1 : -1;

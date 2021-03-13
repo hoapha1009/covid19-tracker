@@ -1,4 +1,4 @@
-import { GetServerSideProps } from "next";
+import { GetStaticProps } from "next";
 import { useState } from "react";
 import CountriesTable from "../components/CountriesTable/CountriesTable";
 import Global from "../components/Global/Global";
@@ -6,7 +6,7 @@ import Layout from "../components/Layout/Layout";
 import SearchInput from "../components/SearchInput/SearchInput";
 import styles from "../styles/Home.module.css";
 
-export default function Home({ global, countries }) {
+export default function Home({ global, countries, error }) {
     const [keyword, setKeyword] = useState<string>("");
 
     const filteredCountries = countries.filter((c) => {
@@ -36,24 +36,33 @@ export default function Home({ global, countries }) {
                 onChange={onHandleChangeSearch}
                 placeholder="Filter by Country name, Country code, Slug..."
             />
-
-            <CountriesTable countries={filteredCountries} />
+            {error ? error : <CountriesTable countries={filteredCountries} />}
         </Layout>
     );
 }
 
-export const getServerSideProps: GetServerSideProps = async (context) => {
-    const data = await fetch("https://api.covid19api.com/summary", {
-        method: "GET",
-        headers: {
-            "Content-Type": "application/json",
-        },
-    }).then((rs) => rs.json());
+export const getStaticProps: GetStaticProps = async () => {
+    let data = {
+        Global: {},
+        Countries: [],
+        error: "Error in API Website!!!",
+    };
+    try {
+        data = await fetch("https://api.covid19api.com/summary", {
+            method: "GET",
+            headers: {
+                "Content-Type": "application/json",
+            },
+        }).then((rs) => {
+            return rs.json();
+        });
+    } catch (error) {}
 
     return {
         props: {
             global: data.Global,
             countries: data.Countries,
+            error: data.error,
         },
     };
 };
