@@ -1,20 +1,34 @@
-import Head from "next/head";
+import { GetServerSideProps } from "next";
+import CountriesTable from "../components/CountriesTable/CountriesTable";
+import Global from "../components/Global/Global";
 import Layout from "../components/Layout/Layout";
 import styles from "../styles/Home.module.css";
 
-export default function Home() {
+export default function Home({ global, countries }) {
     return (
-        <div className={styles.container}>
-            <Head>
-                <title>Covid19 Tracker</title>
-                <link rel="icon" href="/favicon.ico" />
-            </Head>
+        <Layout title="Covid19 Tracker">
+            <div className={styles.counts}>
+                <Global global={global} />
+                Found {countries.length} countries
+            </div>
 
-            <Layout title="Covid19 Tracker">
-                <main className={styles.main}>Main</main>
-
-                <footer className={styles.footer}>Footer</footer>
-            </Layout>
-        </div>
+            <CountriesTable countries={countries} />
+        </Layout>
     );
 }
+
+export const getServerSideProps: GetServerSideProps = async (context) => {
+    const data = await fetch("https://api.covid19api.com/summary", {
+        method: "GET",
+        headers: {
+            "Content-Type": "application/json",
+        },
+    }).then((rs) => rs.json());
+
+    return {
+        props: {
+            global: data.Global,
+            countries: data.Countries,
+        },
+    };
+};

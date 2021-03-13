@@ -1,0 +1,28 @@
+.global {
+    padding: 10px;
+    margin-bottom: 10px;
+
+    background: rgb(213, 183, 143);
+    border-radius: 10px;
+    
+    font-weight: bold;
+}
+
+.title {
+    margin: 0px;
+    padding: 0px;
+    font-size: 20px;
+}
+
+.info {
+    display: grid;
+    grid-template-columns: repeat(2, 1fr);
+
+}
+
+.ele {
+    padding: 4px 4px 4px 8px;
+    
+    border: 1px solid rgba(0, 0, 0, 0.306);
+    border-radius: 2px;
+}
