@@ -4,20 +4,8 @@ import Layout from "../../components/Layout/Layout";
 import styles from "./country.module.css";
 
 const getCovid19 = async (id) => {
-    let dataCovid19 = {};
-    try {
-        const res = await fetch(`https://api.covid19api.com/country/${id}`);
-        dataCovid19 = await res.json();
-    } catch (error) {
-        dataCovid19 = {
-            TotalConfirmed: "?",
-            NewConfirmed: "?",
-            TotalDeaths: "?",
-            NewDeaths: "?",
-            TotalRecovered: "?",
-            NewRecovered: "?",
-        };
-    }
+    const res = await fetch(`https://api.covid19api.com/country/${id}`);
+    const dataCovid19 = await res.json();
 
     return dataCovid19;
 };
@@ -30,20 +18,6 @@ const getCountry = async (id) => {
 };
 
 const Country = ({ country, covid19 }) => {
-    const [borders, setBorders] = useState([]);
-
-    const getBorders = async () => {
-        const borders = await Promise.all(
-            country.borders.map((border) => getCountry(border))
-        );
-
-        setBorders(borders);
-    };
-
-    useEffect(() => {
-        getBorders();
-    }, []);
-
     return (
         <Layout title={country.name}>
             <div className={styles.container}>
@@ -173,21 +147,13 @@ export const getStaticProps: GetStaticProps = async ({ params }) => {
 };
 
 export const getStaticPaths: GetStaticPaths = async () => {
-    let paths = [];
-    try {
-        const countries = await fetch("https://api.covid19api.com/summary", {
-            method: "GET",
-            headers: {
-                "Content-Type": "application/json",
-            },
-        }).then((rs) => {
-            return rs.json();
-        });
+    const res = await fetch("https://api.covid19api.com/summary");
+    const data = await res.json();
+    const countries = data.Countries;
 
-        paths = countries.map((c) => ({
-            params: { id: c.CountryCode },
-        }));
-    } catch (error) {}
+    const paths = countries.map((c) => ({
+        params: { id: c.CountryCode },
+    }));
 
     return {
         paths,

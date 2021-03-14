@@ -36,33 +36,26 @@ export default function Home({ global, countries, error }) {
                 onChange={onHandleChangeSearch}
                 placeholder="Filter by Country name, Country code, Slug..."
             />
-            {error ? error : <CountriesTable countries={filteredCountries} />}
+
+            <CountriesTable countries={filteredCountries} />
         </Layout>
     );
 }
 
 export const getStaticProps: GetStaticProps = async () => {
-    let data = {
-        Global: {},
-        Countries: [],
-        error: "Error in API Website!!!",
-    };
-    try {
-        data = await fetch("https://api.covid19api.com/summary", {
-            method: "GET",
-            headers: {
-                "Content-Type": "application/json",
-            },
-        }).then((rs) => {
-            return rs.json();
-        });
-    } catch (error) {}
+    const data = await fetch("https://api.covid19api.com/summary", {
+        method: "GET",
+        headers: {
+            "Content-Type": "application/json",
+        },
+    }).then((rs) => {
+        return rs.json();
+    });
 
     return {
         props: {
             global: data.Global,
             countries: data.Countries,
-            error: data.error,
         },
     };
 };
